@@ -6,11 +6,11 @@
 </script>
 
 <main>
-  <!-- <Home /> -->
+  <Home />
   <!-- <Lobby /> -->
   <!-- <Game /> -->
   <!-- <Game review={true} /> -->
-  <Result />
+  <!-- <Result /> -->
 </main>
 
 <style>
