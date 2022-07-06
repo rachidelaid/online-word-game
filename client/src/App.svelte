@@ -2,12 +2,15 @@
   import Home from './views/Home.svelte';
   import Lobby from './views/Lobby.svelte';
   import Game from './views/Game.svelte';
+  import Result from './views/Result.svelte';
 </script>
 
 <main>
   <!-- <Home /> -->
   <!-- <Lobby /> -->
-  <Game />
+  <!-- <Game /> -->
+  <!-- <Game review={true} /> -->
+  <Result />
 </main>
 
 <style>
@@ -29,6 +32,5 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 2rem;
   }
 </style>

@@ -1,26 +1,32 @@
 <script>
+  export let review = false;
   import Progress from '../components/Progress.svelte';
 
   let categories = [
     {
       title: 'Animals',
       value: '',
+      checked: false,
     },
     {
       title: 'Food',
       value: '',
+      checked: false,
     },
     {
       title: 'Sports',
       value: '',
+      checked: false,
     },
     {
       title: 'Music',
       value: '',
+      checked: false,
     },
     {
       title: 'Movies',
       value: '',
+      checked: false,
     },
   ];
 
@@ -38,20 +44,40 @@
 
 <div class="game">
   <h1>Game</h1>
-  <div class="progress">
-    <Progress
-      count={categories.filter((c) => c.value).length / categories.length}
-    />
-  </div>
+  {#if !review}
+    <div class="progress">
+      <Progress
+        count={categories.filter((c) => c.value).length / categories.length}
+      />
+    </div>
+  {/if}
   <div class="categories">
     {#each categories as category, i (i)}
       <label for={category.title}>
         {category.title}
-        <input
-          type="text"
-          id={category.title}
-          on:change={(e) => setValue(e, i)}
-        />
+        {#if review}
+          <div>
+            <input
+              type="text"
+              id={category.title}
+              on:change={(e) => setValue(e, i)}
+            />
+            {#if category.checked}
+              <button
+                class="uncheck"
+                on:click={() => (category.checked = false)}>⍻</button
+              >
+            {:else}
+              <button on:click={() => (category.checked = true)}>✓</button>
+            {/if}
+          </div>
+        {:else}
+          <input
+            type="text"
+            id={category.title}
+            on:change={(e) => setValue(e, i)}
+          />
+        {/if}
       </label>
     {/each}
   </div>
@@ -65,7 +91,6 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: 2rem;
   }
 
   .categories {
@@ -79,6 +104,21 @@
     background-color: #fff;
     border-radius: 50%;
     transform: scale(0.5);
+  }
+
+  label > div {
+    display: flex;
+    align-items: centers;
+  }
+
+  label > div button {
+    width: 2.5rem;
+    height: 2.5rem;
+    margin: 0 0 0.5rem 0.5rem;
+  }
+
+  label > div button.uncheck {
+    background-color: var(--color-info);
   }
 
   button {
