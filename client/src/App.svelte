@@ -1,20 +1,14 @@
 <script>
   import Home from './views/Home.svelte';
+  import Lobby from './views/Lobby.svelte';
 </script>
 
 <main>
-  <Home />
+  <!-- <Home /> -->
+  <Lobby />
 </main>
 
 <style>
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-  }
-
   :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;

@@ -3,7 +3,9 @@
   let active = 'Create';
 
   const toggleActive = (e) => {
-    active = e.target.textContent.trim();
+    if (e.target.nodeName === 'P') {
+      active = e.target.textContent.trim();
+    }
   };
 </script>
 
@@ -40,21 +42,21 @@
     text-align: center;
   }
 
-  .home .head {
+  .head {
     display: flex;
     justify-content: space-around;
   }
 
-  .home .head p {
+  .head p {
     cursor: pointer;
     transition: 0.3s ease-in-out;
   }
 
-  .home .head p:hover {
+  .head p:hover {
     color: var(--color-primary);
   }
 
-  .home .head p.active {
+  .head p.active {
     border-bottom: 2px solid var(--color-primary);
   }
 </style>
