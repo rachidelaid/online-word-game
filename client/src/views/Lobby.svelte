@@ -1,6 +1,6 @@
 <script>
   let players = ['Player 1', 'Player 2', 'Player 3', 'Player 4'];
-
+  let lang = '';
   $: categories = [];
 
   const addCategory = () => {
@@ -15,6 +15,11 @@
   const removeCategory = (index) => {
     categories = categories.filter((_, i) => i !== index);
   };
+
+  const updateLang = (e) => {
+    lang = e.target.value;
+    console.log(lang);
+  };
 </script>
 
 <div class="lobby">
@@ -24,6 +29,11 @@
       <p>{player}</p>
     {/each}
   </div>
+  <select on:change={updateLang}>
+    <option value="">Select a language</option>
+    <option value="en">English</option>
+    <option value="ar">Arabic</option>
+  </select>
   <div class="categories">
     {#each categories as category, i (i)}
       <div>
@@ -65,8 +75,12 @@
     min-width: fit-content;
   }
 
+  select {
+    width: min(26rem, 100%);
+  }
+
   .categories {
-    width: 26rem;
+    width: min(26rem, 100%);
   }
 
   .categories > div {

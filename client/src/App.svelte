@@ -1,11 +1,13 @@
 <script>
   import Home from './views/Home.svelte';
   import Lobby from './views/Lobby.svelte';
+  import Game from './views/Game.svelte';
 </script>
 
 <main>
   <!-- <Home /> -->
-  <Lobby />
+  <!-- <Lobby /> -->
+  <Game />
 </main>
 
 <style>
