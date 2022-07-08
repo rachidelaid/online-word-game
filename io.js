@@ -11,6 +11,7 @@ export const onConnect = (socket, rooms) => {
       });
 
       rooms.push(room);
+      socket.join(socket.handshake.auth.room);
     } else if (rooms.some((r) => r.id === socket.handshake.auth.room)) {
       socket.emit('room-exists', {
         msg: "room already exists",
@@ -24,11 +25,28 @@ export const onConnect = (socket, rooms) => {
         id: socket.handshake.auth.id,
         name: socket.handshake.auth.name,
       });
+
+      socket.join(socket.handshake.auth.room);
     } else {
       socket.emit('room-does-not-exist', {
         msg: "room does not exist",
         room: socket.handshake.auth.room,
       });
     }
+  }
+}
+
+export const onDisconnect = (socket, rooms) => {
+  const room = rooms.find((r) => r.id === socket.handshake.auth.room);
+  if (room) {
+    room.removePlayer(socket.handshake.auth.id);
+  }
+
+  if (room.isEmpty()) {
+    socket.to(room.name).emit('room-empty', {
+      msg: "room is empty",
+      room: room.name,
+    });
+    rooms.splice(rooms.indexOf(room), 1);
   }
 }

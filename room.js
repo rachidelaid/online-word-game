@@ -8,16 +8,12 @@ class Room {
     this.players.push(player)
   }
 
-  removePlayer(player) {
-    this.players = this.players.filter(p => p.id !== player.id)
+  removePlayer(playerId) {
+    this.players = this.players.filter(p => p.id !== playerId)
   }
 
   isEmpty() {
-    return this.players.length === 0
-  }
-
-  playerExists(player) {
-    return this.players.some(p => p.id === player.id)
+    return this.players.length <= 1
   }
 }
 

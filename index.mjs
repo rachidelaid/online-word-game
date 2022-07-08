@@ -2,7 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
-import { onConnect } from './io.js';
+import { onConnect, onDisconnect } from './io.js';
 
 const app = express();
 const server = createServer(app);
@@ -21,7 +21,7 @@ io.on('connection', (socket) => {
   onConnect(socket, rooms);
 
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    onDisconnect(socket, rooms);
   });
 });
 
