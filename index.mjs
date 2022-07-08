@@ -23,6 +23,15 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     onDisconnect(socket, rooms);
   });
+
+  socket.on('getPlayers', (roomName) => {
+    const room = rooms.find((r) => r.name === roomName);
+    if (room) {
+      socket.emit('players', {
+        players: room.players,
+      });
+    }
+  })
 });
 
 const port = process.env.PORT || 5000;

@@ -3,14 +3,27 @@
   import Lobby from './views/Lobby.svelte';
   import Game from './views/Game.svelte';
   import Result from './views/Result.svelte';
+
+  $: state = 'home';
+
+  const setState = (event) => {
+    console.log(event);
+    state = event.detail;
+  };
 </script>
 
 <main>
-  <Home />
-  <!-- <Lobby /> -->
-  <!-- <Game /> -->
-  <!-- <Game review={true} /> -->
-  <!-- <Result /> -->
+  {#if state === 'home'}
+    <Home on:changeState={setState} />
+  {:else if state === 'lobby'}
+    <Lobby />
+  {:else if state === 'game'}
+    <Game />
+  {:else if state === 'review'}
+    <Game review={true} />
+  {:else if state === 'result'}
+    <Result />
+  {/if}
 </main>
 
 <style>

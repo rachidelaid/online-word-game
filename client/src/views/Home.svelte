@@ -1,4 +1,7 @@
 <script>
+  import { createEventDispatcher } from 'svelte';
+  const dispatch = createEventDispatcher();
+
   import { fade } from 'svelte/transition';
   import socket from '../socket';
   let active = 'Create';
@@ -20,6 +23,11 @@
 
     socket.on('room-exists', (msg) => {
       console.log(msg);
+    });
+
+    socket.on('joined', (obj) => {
+      console.log(obj);
+      dispatch('changeState', 'lobby');
     });
   };
 </script>
