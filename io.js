@@ -7,6 +7,7 @@ const createRoom = (socket, rooms) => {
     room.addPlayer({
       id: uuidv4(),
       name: socket.handshake.auth.name,
+      admin: true
     });
 
     rooms.push(room);
@@ -14,6 +15,7 @@ const createRoom = (socket, rooms) => {
     socket.emit('joined', {
       msg: 'joined successfully',
       room: socket.handshake.auth.room,
+      players: room.players,
     });
   } else if (rooms.some((r) => r.id === socket.handshake.auth.room)) {
     socket.emit('room-exists', {
@@ -27,7 +29,7 @@ const joinRoom = (socket, rooms) => {
   const room = rooms.find((r) => r.id === socket.handshake.auth.room);
   if (room) {
     room.addPlayer({
-      id: socket.handshake.auth.id,
+      id: uuidv4(),
       name: socket.handshake.auth.name,
     });
 
@@ -35,6 +37,11 @@ const joinRoom = (socket, rooms) => {
     socket.emit('joined', {
       msg: 'joined successfully',
       room: socket.handshake.auth.room,
+      players: room.players,
+    });
+
+    socket.to(socket.handshake.auth.room).emit('playersUpdate', {
+      players: room.players,
     });
   } else {
     socket.emit('room-does-not-exist', {
@@ -58,7 +65,7 @@ export const onDisconnect = (socket, rooms) => {
     room.removePlayer(socket.handshake.auth.id);
   }
 
-  if (room.isEmpty()) {
+  if (room && room.isEmpty()) {
     socket.to(room.name).emit('room-empty', {
       msg: "room is empty",
       room: room.name,

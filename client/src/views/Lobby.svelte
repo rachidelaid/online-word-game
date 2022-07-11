@@ -1,5 +1,11 @@
 <script>
-  let players = ['Player 1', 'Player 2', 'Player 3', 'Player 4'];
+  import socket from '../socket';
+  export let players = [];
+
+  socket.on('playersUpdate', (obj) => {
+    players = obj.players;
+  });
+
   let lang = '';
   $: categories = [];
 
@@ -26,7 +32,14 @@
   <h1>Lobby</h1>
   <div class="players">
     {#each players as player}
-      <p>{player}</p>
+      <p
+        class={`${
+          localStorage.getItem('playerName') === player.name ? 'current' : ''
+        }`}
+      >
+        {`${player.admin ? '👑' : ''}`}
+        {player.name}
+      </p>
     {/each}
   </div>
   <select on:change={updateLang}>
@@ -73,6 +86,11 @@
     border-radius: 0.5rem;
     color: #fff;
     min-width: fit-content;
+    opacity: 0.7;
+  }
+
+  .players p.current {
+    opacity: 1;
   }
 
   select {

@@ -14,6 +14,8 @@
 
   const connect = (e) => {
     e.preventDefault();
+    localStorage.setItem('playerName', e.target.elements.username.value.trim());
+
     socket.auth = {
       name: e.target.elements.username.value.trim(),
       room: e.target.elements.roomId.value.trim(),
@@ -27,7 +29,10 @@
 
     socket.on('joined', (obj) => {
       console.log(obj);
-      dispatch('changeState', 'lobby');
+      dispatch('changeState', {
+        state: 'lobby',
+        players: obj.players,
+      });
     });
   };
 </script>

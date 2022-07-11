@@ -5,10 +5,11 @@
   import Result from './views/Result.svelte';
 
   $: state = 'home';
+  $: players = [];
 
   const setState = (event) => {
-    console.log(event);
-    state = event.detail;
+    state = event.detail.state;
+    players = event.detail.players;
   };
 </script>
 
@@ -16,7 +17,7 @@
   {#if state === 'home'}
     <Home on:changeState={setState} />
   {:else if state === 'lobby'}
-    <Lobby />
+    <Lobby {players} />
   {:else if state === 'game'}
     <Game />
   {:else if state === 'review'}
