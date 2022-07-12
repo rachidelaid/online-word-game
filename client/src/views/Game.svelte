@@ -49,6 +49,7 @@
 
 <div class="game">
   <h1>Game</h1>
+  <p>current character: <b>{$store.character}</b></p>
   {#if !review}
     <div class="progress">
       <Progress
@@ -100,6 +101,10 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
+  }
+
+  .game b {
+    font-size: 2rem;
   }
 
   .categories {

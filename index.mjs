@@ -25,6 +25,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('changeLang', (lang) => {
+    const room = rooms.find((r) => r.id === socket.handshake.auth.room);
+    room.lang = lang;
     io.emit('updateLang', {
       lang,
       room: socket.handshake.auth.room,
@@ -32,6 +34,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('changeCategory', (categories) => {
+
     io.emit('updateCategory', {
       categories,
       room: socket.handshake.auth.room,
@@ -39,8 +42,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('startGame', () => {
-    console.log('start game');
-    start(io, socket);
+    start(io, socket, rooms);
   });
 
   socket.on('done', (array) => {

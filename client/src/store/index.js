@@ -5,7 +5,8 @@ const store = writable({
   lang: 'en',
   categories: [],
   state: 'home',
-  room: null
+  room: null,
+  character: null,
 });
 
 export default store;

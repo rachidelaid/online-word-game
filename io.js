@@ -1,6 +1,11 @@
 import Room from './room.js';
 let globalIo;
 
+const alphabets = {
+  en: 'abcdefghijklmnopqrstuvwxyz',
+  ar: 'أبتثجحخدذرزسشصضطظعغفقكلمنهوي',
+}
+
 const emitJoined = (room) => {
   if (!globalIo) return;
 
@@ -86,9 +91,14 @@ export const onDisconnect = (socket, rooms) => {
   }
 };
 
-export const start = (io, socket) => {
+export const start = (io, socket, rooms) => {
+  const room = rooms.find((r) => r.id === socket.handshake.auth.room);
+  console.log('lang', room.lang);
+  const random = Math.floor(Math.random() * alphabets[room.lang].length);
+
   io.emit('launchGame', {
     room: socket.handshake.auth.room,
+    character: alphabets[room.lang][random],
   });
 };
 

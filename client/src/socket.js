@@ -65,6 +65,7 @@ socket.on('launchGame', (obj) => {
       return {
         ...state,
         state: 'game',
+        character: obj.character,
       };
     }
   });
@@ -102,6 +103,7 @@ socket.on('playAgain', (obj) => {
         categories: [],
         state: 'lobby',
         players: obj.players,
+        character: null,
       };
     }
   });
