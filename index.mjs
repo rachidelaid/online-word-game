@@ -18,20 +18,18 @@ const rooms = [];
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
-  onConnect(socket, rooms);
+  onConnect(socket, rooms, io);
 
   socket.on('disconnect', () => {
     onDisconnect(socket, rooms);
   });
 
-  socket.on('getPlayers', (roomName) => {
-    const room = rooms.find((r) => r.name === roomName);
-    if (room) {
-      socket.emit('players', {
-        players: room.players,
-      });
-    }
-  })
+  socket.on('changeLang', (lang) => {
+    io.emit('updateLang', {
+      lang,
+      room: socket.handshake.auth.room,
+    });
+  });
 });
 
 const port = process.env.PORT || 5000;

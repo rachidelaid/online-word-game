@@ -1,8 +1,6 @@
 <script>
   import socket from '../socket';
   import store from '../store';
-
-  let lang = '';
   $: categories = [];
 
   const addCategory = () => {
@@ -19,8 +17,19 @@
   };
 
   const updateLang = (e) => {
-    lang = e.target.value;
-    console.log(lang);
+    if (
+      $store.players.find((p) => p.id === sessionStorage.getItem('playerId'))
+        .admin
+    ) {
+      const lang = e.target.value;
+      store.update((state) => {
+        return {
+          ...state,
+          lang,
+        };
+      });
+      socket.emit('changeLang', lang);
+    }
   };
 </script>
 
@@ -38,7 +47,7 @@
       </p>
     {/each}
   </div>
-  <select on:change={updateLang}>
+  <select on:change={updateLang} value={$store.lang}>
     <option value="">Select a language</option>
     <option value="en">English</option>
     <option value="ar">Arabic</option>

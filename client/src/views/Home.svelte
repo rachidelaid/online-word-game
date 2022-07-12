@@ -1,4 +1,5 @@
 <script>
+  import store from '../store';
   import { createEventDispatcher } from 'svelte';
   import { v4 as uuidv4 } from 'uuid';
   const dispatch = createEventDispatcher();
@@ -26,6 +27,13 @@
 
     socket.auth = player;
     socket.connect();
+
+    store.update((state) => {
+      return {
+        ...state,
+        room: player.room,
+      };
+    });
   };
 </script>
 
