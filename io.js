@@ -93,7 +93,6 @@ export const onDisconnect = (socket, rooms) => {
 
 export const start = (io, socket, rooms) => {
   const room = rooms.find((r) => r.id === socket.handshake.auth.room);
-  console.log('lang', room.lang);
   const random = Math.floor(Math.random() * alphabets[room.lang].length);
 
   io.emit('launchGame', {
