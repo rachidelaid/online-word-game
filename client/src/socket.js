@@ -43,7 +43,6 @@ socket.on('updateLang', (obj) => {
 });
 
 socket.on('updateCategory', (obj) => {
-  console.log(obj);
   store.update((state) => {
     if (obj.room === state.room) {
       return {
@@ -55,7 +54,6 @@ socket.on('updateCategory', (obj) => {
 });
 
 socket.on('room-empty', (obj) => {
-  console.log(obj);
   reset();
 });
 
