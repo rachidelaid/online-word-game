@@ -1,26 +1,58 @@
 <script>
   import socket from '../socket';
   import store from '../store';
-  $: categories = [];
+
+  const isAdmin = () => {
+    return $store.players.find(
+      (p) => p.id === sessionStorage.getItem('playerId'),
+    ).admin;
+  };
+
+  const updateCategories = () => {
+    socket.emit('changeCategory', $store.categories);
+  };
 
   const addCategory = () => {
-    categories = [...categories, ''];
+    if (!isAdmin()) return;
+
+    store.update((state) => {
+      return {
+        ...state,
+        categories: [...state.categories, ''],
+      };
+    });
+    updateCategories();
   };
 
   const updateCategory = (e, index) => {
-    categories[index] = e.target.value;
-    console.log(categories);
+    if (!isAdmin()) return;
+
+    store.update((state) => {
+      const cats = [...state.categories];
+      cats[index] = e.target.value;
+      return {
+        ...state,
+        categories: cats,
+      };
+    });
+    updateCategories();
   };
 
   const removeCategory = (index) => {
-    categories = categories.filter((_, i) => i !== index);
+    if (!isAdmin()) return;
+
+    store.update((state) => {
+      const cats = [...state.categories].filter((_, i) => i !== index);
+      return {
+        ...state,
+        categories: cats,
+      };
+    });
+    updateCategories();
   };
 
   const updateLang = (e) => {
-    if (
-      $store.players.find((p) => p.id === sessionStorage.getItem('playerId'))
-        .admin
-    ) {
+    if (isAdmin()) {
       const lang = e.target.value;
       store.update((state) => {
         return {
@@ -53,18 +85,22 @@
     <option value="ar">Arabic</option>
   </select>
   <div class="categories">
-    {#each categories as category, i (i)}
+    {#each $store.categories as category, i (i)}
       <div>
         <input
           placeholder={`category ${i + 1}`}
           type="text"
+          value={category ? category : ''}
           on:change={(e) => updateCategory(e, i)}
+          disabled={!isAdmin()}
         />
-        <button on:click={() => removeCategory(i)} class="delete">X</button>
+        {#if isAdmin()}
+          <button on:click={() => removeCategory(i)} class="delete">X</button>
+        {/if}
       </div>
     {/each}
   </div>
-  {#if $store.players.find((p) => p.id === sessionStorage.getItem('playerId')).admin}
+  {#if isAdmin()}
     <button on:click={addCategory}><span>+</span> Category</button>
     <button>Start</button>
   {/if}

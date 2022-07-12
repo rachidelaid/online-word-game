@@ -42,6 +42,18 @@ socket.on('updateLang', (obj) => {
   });
 });
 
+socket.on('updateCategory', (obj) => {
+  console.log(obj);
+  store.update((state) => {
+    if (obj.room === state.room) {
+      return {
+        ...state,
+        categories: obj.categories,
+      };
+    }
+  });
+});
+
 socket.on('room-empty', () => {
   reset();
 });

@@ -30,6 +30,13 @@ io.on('connection', (socket) => {
       room: socket.handshake.auth.room,
     });
   });
+
+  socket.on('changeCategory', (categories) => {
+    io.emit('updateCategory', {
+      categories,
+      room: socket.handshake.auth.room,
+    });
+  });
 });
 
 const port = process.env.PORT || 5000;
