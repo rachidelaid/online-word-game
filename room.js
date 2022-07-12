@@ -2,6 +2,11 @@ class Room {
   constructor(id) {
     this.id = id
     this.players = []
+    this.lang = 'en'
+  }
+
+  changeLang(lang) {
+    this.lang = lang
   }
 
   addPlayer(player) {

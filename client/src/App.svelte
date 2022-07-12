@@ -3,26 +3,19 @@
   import Lobby from './views/Lobby.svelte';
   import Game from './views/Game.svelte';
   import Result from './views/Result.svelte';
-
-  $: state = 'home';
-  $: players = [];
-
-  const setState = (event) => {
-    state = event.detail.state;
-    players = event.detail.players;
-  };
+  import store from './store';
 </script>
 
 <main>
-  {#if state === 'home'}
-    <Home on:changeState={setState} />
-  {:else if state === 'lobby'}
-    <Lobby {players} />
-  {:else if state === 'game'}
+  {#if $store.state === 'home'}
+    <Home />
+  {:else if $store.state === 'lobby'}
+    <Lobby />
+  {:else if $store.state === 'game'}
     <Game />
-  {:else if state === 'review'}
+  {:else if $store.state === 'review'}
     <Game review={true} />
-  {:else if state === 'result'}
+  {:else if $store.state === 'result'}
     <Result />
   {/if}
 </main>

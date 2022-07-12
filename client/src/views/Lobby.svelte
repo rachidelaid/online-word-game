@@ -1,10 +1,6 @@
 <script>
   import socket from '../socket';
-  export let players = [];
-
-  socket.on('playersUpdate', (obj) => {
-    players = obj.players;
-  });
+  import store from '../store';
 
   let lang = '';
   $: categories = [];
@@ -31,10 +27,10 @@
 <div class="lobby">
   <h1>Lobby</h1>
   <div class="players">
-    {#each players as player}
+    {#each $store.players as player}
       <p
         class={`${
-          localStorage.getItem('playerName') === player.name ? 'current' : ''
+          sessionStorage.getItem('playerId') === player.id ? 'current' : ''
         }`}
       >
         {`${player.admin ? '👑' : ''}`}
@@ -59,8 +55,10 @@
       </div>
     {/each}
   </div>
-  <button on:click={addCategory}><span>+</span> Category</button>
-  <button>Start</button>
+  {#if $store.players.find((p) => p.id === sessionStorage.getItem('playerId')).admin}
+    <button on:click={addCategory}><span>+</span> Category</button>
+    <button>Start</button>
+  {/if}
 </div>
 
 <style>

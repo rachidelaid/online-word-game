@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from 'svelte';
+  import { v4 as uuidv4 } from 'uuid';
   const dispatch = createEventDispatcher();
 
   import { fade } from 'svelte/transition';
@@ -14,26 +15,17 @@
 
   const connect = (e) => {
     e.preventDefault();
-    localStorage.setItem('playerName', e.target.elements.username.value.trim());
-
-    socket.auth = {
+    const player = {
+      id: uuidv4(),
       name: e.target.elements.username.value.trim(),
       room: e.target.elements.roomId.value.trim(),
       status: active,
     };
+
+    sessionStorage.setItem('playerId', player.id);
+
+    socket.auth = player;
     socket.connect();
-
-    socket.on('room-exists', (msg) => {
-      console.log(msg);
-    });
-
-    socket.on('joined', (obj) => {
-      console.log(obj);
-      dispatch('changeState', {
-        state: 'lobby',
-        players: obj.players,
-      });
-    });
   };
 </script>
 
