@@ -2,7 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
-import { onConnect, onDisconnect } from './io.js';
+import { onConnect, onDisconnect, start, done } from './io.js';
 
 const app = express();
 const server = createServer(app);
@@ -37,6 +37,15 @@ io.on('connection', (socket) => {
       room: socket.handshake.auth.room,
     });
   });
+
+  socket.on('startGame', () => {
+    console.log('start game');
+    start(io, socket);
+  });
+
+  socket.on('done', (array) => {
+    done(io, socket, rooms, array);
+  })
 });
 
 const port = process.env.PORT || 5000;

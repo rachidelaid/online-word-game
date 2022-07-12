@@ -15,8 +15,8 @@ const reset = () => {
   });
 };
 
-socket.on('room-exists', () => {
-  reset();
+socket.on('room-exists', (obj) => {
+  console.log(obj);
 });
 
 socket.on('joined', (obj) => {
@@ -54,8 +54,32 @@ socket.on('updateCategory', (obj) => {
   });
 });
 
-socket.on('room-empty', () => {
+socket.on('room-empty', (obj) => {
+  console.log(obj);
   reset();
 });
+
+socket.on('launchGame', (obj) => {
+  store.update((state) => {
+    if (obj.room === state.room) {
+      return {
+        ...state,
+        state: 'game',
+      };
+    }
+  });
+})
+
+socket.on('gameOver', (obj) => {
+  store.update((state) => {
+    if (obj.room === state.room) {
+      return {
+        ...state,
+        state: 'review',
+        players: obj.players,
+      };
+    }
+  });
+})
 
 export default socket;

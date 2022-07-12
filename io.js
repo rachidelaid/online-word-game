@@ -18,6 +18,7 @@ const createRoom = (socket, rooms) => {
       id: socket.handshake.auth.id,
       name: socket.handshake.auth.name,
       admin: true,
+      done: false
     });
 
     rooms.push(room);
@@ -38,6 +39,7 @@ const joinRoom = (socket, rooms) => {
     room.addPlayer({
       id: socket.handshake.auth.id,
       name: socket.handshake.auth.name,
+      done: false
     });
 
     socket.join(socket.handshake.auth.room);
@@ -65,7 +67,7 @@ export const onDisconnect = (socket, rooms) => {
   if (!room) return;
 
   if (room.isEmpty()) {
-    socket.to(socket.handshake.auth.room).emit('room-empty', {
+    globalIo.emit('room-empty', {
       msg: 'room is empty',
       room: socket.handshake.auth.room,
     });
@@ -80,3 +82,29 @@ export const onDisconnect = (socket, rooms) => {
     emitJoined(room);
   }
 };
+
+export const start = (io, socket) => {
+  io.emit('launchGame', {
+    room: socket.handshake.auth.room,
+  });
+}
+
+export const done = (io, socket, rooms, array) => {
+  const room = rooms.find((r) => r.id === socket.handshake.auth.room);
+  if (!room) return;
+
+  room.players.forEach((p, i) => {
+    if (p.id === socket.handshake.auth.id) {
+      p.answers = array
+      p.done = true;
+      p.reviewerIndex = i + 1 >= room.players.length ? 0 : i + 1;
+    }
+  });
+
+  if (room.isEveryoneDone()) {
+    io.emit('gameOver', {
+      room: socket.handshake.auth.room,
+      players: room.players,
+    });
+  }
+}

@@ -18,7 +18,14 @@
     store.update((state) => {
       return {
         ...state,
-        categories: [...state.categories, ''],
+        categories: [
+          ...state.categories,
+          {
+            title: '',
+            value: '',
+            checked: false,
+          },
+        ],
       };
     });
     updateCategories();
@@ -29,7 +36,7 @@
 
     store.update((state) => {
       const cats = [...state.categories];
-      cats[index] = e.target.value;
+      cats[index].title = e.target.value;
       return {
         ...state,
         categories: cats,
@@ -63,6 +70,12 @@
       socket.emit('changeLang', lang);
     }
   };
+
+  const startgame = () => {
+    if (!isAdmin()) return;
+
+    socket.emit('startGame');
+  };
 </script>
 
 <div class="lobby">
@@ -90,7 +103,7 @@
         <input
           placeholder={`category ${i + 1}`}
           type="text"
-          value={category ? category : ''}
+          value={category.title}
           on:change={(e) => updateCategory(e, i)}
           disabled={!isAdmin()}
         />
@@ -102,7 +115,7 @@
   </div>
   {#if isAdmin()}
     <button on:click={addCategory}><span>+</span> Category</button>
-    <button>Start</button>
+    <button on:click={startgame}>Start</button>
   {/if}
 </div>
 

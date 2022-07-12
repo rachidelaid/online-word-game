@@ -1,44 +1,32 @@
 <script>
+  import store from '../store';
+  import socket from '../socket';
   export let review = false;
   import Progress from '../components/Progress.svelte';
 
-  let categories = [
-    {
-      title: 'Animals',
-      value: '',
-      checked: false,
-    },
-    {
-      title: 'Food',
-      value: '',
-      checked: false,
-    },
-    {
-      title: 'Sports',
-      value: '',
-      checked: false,
-    },
-    {
-      title: 'Music',
-      value: '',
-      checked: false,
-    },
-    {
-      title: 'Movies',
-      value: '',
-      checked: false,
-    },
-  ];
-
   const setValue = (e, index) => {
-    categories = categories.map((c, i) => {
-      if (i === index) {
-        c.value = e.target.value.trim();
-      }
-      return c;
+    store.update((state) => {
+      const cats = [...state.categories];
+      cats[index].value = e.target.value.trim();
+      return {
+        ...state,
+        categories: cats,
+      };
     });
+  };
 
-    console.log(categories);
+  const done = () => {
+    socket.emit('done', $store.categories);
+  };
+
+  const getAnswers = () => {
+    const index = $store.players.find(
+      (p) => p.id === sessionStorage.getItem('playerId'),
+    ).reviewerIndex;
+
+    console.log($store.players[index].answers);
+
+    return $store.players[index].answers;
   };
 </script>
 
@@ -47,21 +35,29 @@
   {#if !review}
     <div class="progress">
       <Progress
-        count={categories.filter((c) => c.value).length / categories.length}
+        count={$store.categories.filter((c) => c.value).length /
+          $store.categories.length}
       />
     </div>
   {/if}
   <div class="categories">
-    {#each categories as category, i (i)}
-      <label for={category.title}>
-        {category.title}
-        {#if review}
+    {#if !review}
+      {#each $store.categories as category, i (i)}
+        <label for={category.title}>
+          {category.title}
+          <input
+            type="text"
+            id={category.title}
+            on:change={(e) => setValue(e, i)}
+          />
+        </label>
+      {/each}
+    {:else}
+      {#each getAnswers() as category}
+        <label for={category.title}>
+          {category.title}
           <div>
-            <input
-              type="text"
-              id={category.title}
-              on:change={(e) => setValue(e, i)}
-            />
+            <input type="text" value={category.value} />
             {#if category.checked}
               <button
                 class="uncheck"
@@ -71,17 +67,11 @@
               <button on:click={() => (category.checked = true)}>✓</button>
             {/if}
           </div>
-        {:else}
-          <input
-            type="text"
-            id={category.title}
-            on:change={(e) => setValue(e, i)}
-          />
-        {/if}
-      </label>
-    {/each}
+        </label>
+      {/each}
+    {/if}
   </div>
-  <button>Done</button>
+  <button on:click={done}>Done</button>
 </div>
 
 <style>

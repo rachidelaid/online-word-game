@@ -18,7 +18,11 @@ class Room {
   }
 
   isEmpty() {
-    return this.players.length <= 1
+    return this.players.length <= 2
+  }
+
+  isEveryoneDone() {
+    return this.players.every(p => p.done)
   }
 }
 
