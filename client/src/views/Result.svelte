@@ -1,28 +1,33 @@
 <script>
-  let players = [
-    {
-      name: 'Player 1',
-      score: 0,
-    },
-    {
-      name: 'Player 2',
-      score: 0,
-    },
-  ];
+  import store from '../store';
+  import socket from '../socket';
+
+  $: clicked = false;
+
+  const getScore = (player) => {
+    const valid = player.answers.filter((p) => p.checked).length;
+
+    return Math.floor((valid / player.answers.length) * 100);
+  };
+
+  const playAgain = () => {
+    socket.emit('playAgain');
+  };
 </script>
 
 <div class="result">
   <h1>Result</h1>
   <div class="players">
-    {#each players as player, i (i)}
+    {#each $store.players as player, i (i)}
       <div class="player">
         <h2>{player.name}</h2>
-        <p class="score-value">{player.score}%</p>
+        <p class="score-value">{getScore(player)}%</p>
       </div>
     {/each}
   </div>
-
-  <button>Play Again</button>
+  {#if !clicked}
+    <button on:click={playAgain}>Play Again</button>
+  {/if}
 </div>
 
 <style>

@@ -1,8 +1,8 @@
 import Room from './room.js';
-let globalIo
+let globalIo;
 
 const emitJoined = (room) => {
-  if (!globalIo) return
+  if (!globalIo) return;
 
   globalIo.emit('joined', {
     msg: 'joined successfully',
@@ -12,13 +12,16 @@ const emitJoined = (room) => {
 };
 
 const createRoom = (socket, rooms) => {
-  if (!rooms.length || !rooms.some((r) => r.id === socket.handshake.auth.room)) {
+  if (
+    !rooms.length ||
+    !rooms.some((r) => r.id === socket.handshake.auth.room)
+  ) {
     const room = new Room(socket.handshake.auth.room);
     room.addPlayer({
       id: socket.handshake.auth.id,
       name: socket.handshake.auth.name,
       admin: true,
-      done: false
+      done: false,
     });
 
     rooms.push(room);
@@ -39,7 +42,7 @@ const joinRoom = (socket, rooms) => {
     room.addPlayer({
       id: socket.handshake.auth.id,
       name: socket.handshake.auth.name,
-      done: false
+      done: false,
     });
 
     socket.join(socket.handshake.auth.room);
@@ -54,7 +57,7 @@ const joinRoom = (socket, rooms) => {
 };
 
 export const onConnect = (socket, rooms, io) => {
-  globalIo = io
+  globalIo = io;
   if (socket.handshake.auth.status === 'Create') {
     createRoom(socket, rooms);
   } else if (socket.handshake.auth.status === 'Join') {
@@ -87,7 +90,7 @@ export const start = (io, socket) => {
   io.emit('launchGame', {
     room: socket.handshake.auth.room,
   });
-}
+};
 
 export const done = (io, socket, rooms, array) => {
   const room = rooms.find((r) => r.id === socket.handshake.auth.room);
@@ -95,7 +98,7 @@ export const done = (io, socket, rooms, array) => {
 
   room.players.forEach((p, i) => {
     if (p.id === socket.handshake.auth.id) {
-      p.answers = array
+      p.answers = array;
       p.done = true;
       p.reviewerIndex = i + 1 >= room.players.length ? 0 : i + 1;
     }
@@ -106,5 +109,33 @@ export const done = (io, socket, rooms, array) => {
       room: socket.handshake.auth.room,
       players: room.players,
     });
+
+    room.players.forEach((p) => {
+      p.done = false;
+    });
   }
-}
+};
+
+export const reviewDone = (io, socket, rooms, obj) => {
+  const room = rooms.find((r) => r.id === socket.handshake.auth.room);
+  if (!room) return;
+
+  room.players.forEach((p, i) => {
+    if (p.id === socket.handshake.auth.id) {
+      p.done = true;
+    }
+  });
+
+  room.players[obj.index].answers = obj.answers;
+
+  if (room.isEveryoneDone()) {
+    io.emit('playersResult', {
+      room: socket.handshake.auth.room,
+      players: room.players,
+    });
+
+    room.players.forEach((p) => {
+      p.done = false;
+    });
+  }
+};

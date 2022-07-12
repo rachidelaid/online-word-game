@@ -3,7 +3,7 @@
 </script>
 
 <div id="cont">
-  <b>{count * 100}%</b>
+  <b>{Math.floor(count * 100)}%</b>
   <svg
     id="svg"
     width="200"

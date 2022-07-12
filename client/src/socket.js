@@ -82,4 +82,29 @@ socket.on('gameOver', (obj) => {
   });
 })
 
+socket.on('playersResult', (obj) => {
+  store.update((state) => {
+    if (obj.room === state.room) {
+      return {
+        ...state,
+        state: 'result',
+        players: obj.players,
+      };
+    }
+  });
+})
+
+socket.on('playAgain', (obj) => {
+  store.update((state) => {
+    if (obj.room === state.room) {
+      return {
+        ...state,
+        categories: [],
+        state: 'lobby',
+        players: obj.players,
+      };
+    }
+  });
+})
+
 export default socket;

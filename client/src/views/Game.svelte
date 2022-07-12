@@ -1,8 +1,13 @@
 <script>
+  import { onMount } from 'svelte';
+
   import store from '../store';
   import socket from '../socket';
   export let review = false;
   import Progress from '../components/Progress.svelte';
+
+  $: sent = false;
+  $: answers = [];
 
   const setValue = (e, index) => {
     store.update((state) => {
@@ -16,18 +21,30 @@
   };
 
   const done = () => {
+    sent = true;
+
+    if (review) {
+      socket.emit('reviewDone', {
+        index: $store.players.find(
+          (p) => p.id === sessionStorage.getItem('playerId'),
+        ).reviewerIndex,
+        answers: answers,
+      });
+      return;
+    }
+
     socket.emit('done', $store.categories);
   };
 
-  const getAnswers = () => {
+  onMount(() => {
+    if (!review) return;
+
     const index = $store.players.find(
       (p) => p.id === sessionStorage.getItem('playerId'),
     ).reviewerIndex;
 
-    console.log($store.players[index].answers);
-
-    return $store.players[index].answers;
-  };
+    answers = [...$store.players[index].answers];
+  });
 </script>
 
 <div class="game">
@@ -53,7 +70,7 @@
         </label>
       {/each}
     {:else}
-      {#each getAnswers() as category}
+      {#each answers as category}
         <label for={category.title}>
           {category.title}
           <div>
@@ -71,7 +88,9 @@
       {/each}
     {/if}
   </div>
-  <button on:click={done}>Done</button>
+  {#if !sent}
+    <button on:click={done}>Done</button>
+  {/if}
 </div>
 
 <style>

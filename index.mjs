@@ -2,7 +2,7 @@ import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 
-import { onConnect, onDisconnect, start, done } from './io.js';
+import { onConnect, onDisconnect, start, done, reviewDone } from './io.js';
 
 const app = express();
 const server = createServer(app);
@@ -45,7 +45,26 @@ io.on('connection', (socket) => {
 
   socket.on('done', (array) => {
     done(io, socket, rooms, array);
+  });
+
+  socket.on('reviewDone', (obj) => {
+    reviewDone(io, socket, rooms, obj);
   })
+
+  socket.on('playAgain', () => {
+    const room = rooms.find((r) => r.id === socket.handshake.auth.room);
+
+    room.players.forEach((p) => {
+      p.done = false;
+      delete p.answers;
+      delete p.reviewerIndex;
+    });
+
+    io.emit('playAgain', {
+      room: socket.handshake.auth.room,
+      players: room.players,
+    });
+  });
 });
 
 const port = process.env.PORT || 5000;
